@@ -1,94 +1,89 @@
-const forma = document.querySelector(".forma");
-
-const sizeStandart = document.querySelector("#sizeStandart");
-const sizeBig = document.querySelector("#sizeBig");
-
-const cheese = document.querySelector("#cheese");
-const salad = document.querySelector("#salad");
-const potato = document.querySelector("#potato");
-const tomato = document.querySelector("#tomato");
-const caesar = document.querySelector("#caesar");
 const checkout = document.querySelector("#checkout");
 
-const summa = document.querySelector("#summa");
-const summaccal = document.querySelector("#summaccal");
-
-class Burger {
-    constructor() {
-        this.burg = {size: "standart", price: 50, ccal:20};
-    };
-   
-    changeSize() {
-        this.burg.price +=50;
-        this.burg.ccal +=20;
-        console.log("burger size changed to big");
-        sizeStandart.removeAttribute("checked");
-    };
-
-    addCheese() {
-        this.burg.price +=10;
-        this.burg.ccal +=20;
-        console.log("cheese added");
-    };
-
-    addSalad() {
-        this.burg.price +=20;
-        this.burg.ccal +=5;
-        console.log("salad added");
-    };
-
-    addPotato() {
-        this.burg.price +=15;
-        this.burg.ccal +=10;
-        console.log("potato added");
-    };
-
-    addTomatoSause() {
-        this.burg.price +=15;
-        this.burg.ccal +=0;
-        console.log("tomato sause added");
-    };
-
-    addCaesarSause() {
-        this.burg.price +=20;
-        this.burg.ccal +=5;
-        console.log("caesar sause added");
-    };
-
+/**
+ * element constructor by:
+ * name from inputs "value"
+ * price and ccal from inputs data-attributes (dataset array)
+ */
+class Param {
+    constructor(element) {
+        this.name = element.value;
+        this.price = +element.dataset["price"];
+        this.ccal = +element.dataset["ccal"]
+    }
 };
 
+/**
+ * burger constructor by size option and sause from checked inputs
+ */
+class Burger {
+    constructor(size, option, sause) {
+        this.size = new Param(this._select(size));
+        this.option = this._getOptions(option);
+        this.sause = new Param(this._select(sause));
+    };
 
-let order = new Burger();
+    /**
+     * @returns checked input element
+     */
+    _select (name) {
+        return document.querySelector(`input[name=${name}]:checked`);
+    };
 
-sizeBig.addEventListener("click", () => {
-    order.changeSize();
-});
+    /**
+     * spread checked options of burger in array
+     * @returns array of checked input element
+     */
+     _selectAll (name) {
+        return [...document.querySelectorAll(`input[name=${name}]:checked`)];
+    };
 
-cheese.addEventListener("click", () => {
-    order.addCheese();
-});
+    /**
+     * create blank array for all burger options object
+     * take, coming from _selectAll method, array with checked in html burger options
+     * create new object of each element, and push in result array
+     * @returns array with objects of selected burger options created with Param constructor
+     */
+    _getOptions (name) {
+        let result = [];
+        this._selectAll(name).forEach(option => {
+            let obj = new Param(option);
+            result.push(obj);
+        });
+        return result;
+    };
 
-salad.addEventListener("click", () => {
-    order.addSalad();
-});
+    _sumPrice () {
+        let money = this.size.price + this.sause.price;
+        this.option.forEach(option => {
+            money+= option.price;
+        });
+        return money;
+    };
 
-potato.addEventListener("click", () => {
-    order.addPotato();
-});
+    _sumCcal () {
+        let calories = this.size.ccal + this.sause.ccal;
+        this.option.forEach(option => {
+            calories+= option.ccal;
+        });
+        return calories;
+    };
 
-tomato.addEventListener("click", () => {
-    order.addTomatoSause();
-});
 
-caesar.addEventListener("click", () => {
-    order.addCaesarSause();
-});
+    showSum (money, calories) {       
+        document.querySelector(money).textContent = this._sumPrice();
+        document.querySelector(calories).textContent = this._sumCcal();
+    };
+};
 
-checkout.addEventListener("click", e => {
-    e.preventDefault();
-    summa.textContent = `${order.burg.price}`;
-    summaccal.textContent = `${order.burg.ccal}`;
-    console.log(`Цена бургера сосиавит: ${order.burg.price}`);
-    console.log(`Каллорийность бургера сосиавит: ${order.burg.ccal}`);
-
-});
+/**
+ * create new Burger object by names in inputs
+ * calculate sum of price and calories by ids
+ */
+window.onload = () => {
+    checkout.addEventListener("click", e => {
+        e.preventDefault();
+        let order = new Burger("size", "option", "sause");
+        order.showSum("#summa", "#summaccal");
+    });
+};

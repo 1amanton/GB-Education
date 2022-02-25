@@ -13,21 +13,32 @@
     <div class="menu">
         <form class="forma">
             <h1>SIZE:</h1>
-            <input type="checkbox" name="" id="sizeStandart" checked> STANDART BURGER
-            <input type="checkbox" name="" id="sizeBig"> BIG BURGER
+            <input type="radio" id="standart" name="size" value="Standart" data-price="50" data-ccal="20" checked>
+            <label for="standart">STANDART BURGER</label>
+
+            <input type="radio" id="big" name="size" value="Big" data-price="100" data-ccal="40">
+            <label for="big">BIG BURGER</label>
             <hr>
             <h1>OPTIONS:</h1>
-            <input type="radio" name="" id="cheese"> CHEESE
-            <input type="radio" name="" id="salad"> SALAD
-            <input type="radio" name="" id="potato"> POTATO
+            <input type="checkbox" id="cheese" name="option" value="Cheese" data-price="10" data-ccal="20">
+            <label for="cheese">CHEESE</label>
+
+            <input type="checkbox" id="salad" name="option" value="Salad" data-price="20" data-ccal="5">
+            <label for="salad">SALAD</label>
+
+            <input type="checkbox" id="potato" name="option" value="Potato" data-price="10" data-ccal="10">
+            <label for="potato">POTATO</label>
             <hr>
             <h1>SAUSE:</h1>
-            <input type="radio" name="" id="tomato"> TOMATO SAUSE
-            <input type="radio" name="" id="caesar"> CAESAR SAUSE
+            <input type="radio" id="tomato" name="sause" value="Tomato" data-price="9" data-ccal="10" checked>
+            <label for="tomato">TOMATO SAUSE</label>
+            
+            <input type="radio" id="caesar" name="sause" value="Caesar" data-price="9" data-ccal="20">
+            <label for="caesar">CAESAR SAUSE</label>
             <hr>
             <button id="checkout">CHECKOUT!</button>
-            <div class="total">TOTAL PRICE: <span id="summa"></span></div>
-            <div class="total">CALLORIES: <span id="summaccal"></span></div>
+            <div class="total">TOTAL PRICE: <span id="summa">0</span></div>
+            <div class="total">CALLORIES: <span id="summaccal">0</span></div>
         </form>
     </div>
 
