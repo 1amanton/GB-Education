@@ -1,54 +1,91 @@
+const cart = document.querySelector(".h-basket");
+const cartCounter = document.querySelector(".h-basket-counter");
+const basketWindow = document.querySelector(".basket");
+const basketWrapper = document.querySelector(".basket-wrapper");
+const basketClose = document.querySelector(".basket-close");
+
 const productsDiv = document.querySelector(".productlist");
+const cartDiv = document.querySelector(".basket-window");
+
+const API = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
 
 class ProductList {
-    constructor(container=productsDiv) {
+    constructor(container=productsDiv, cartContainer=cartDiv) {
         this.container = container;
+        this.cartContainer = cartContainer;
+
         this.goods = [];
-        this._fetchProducts();
-        this.render();
-        this.getProductsSum();
+        this.cartGoods = [];
+
+        /**
+         * spread data array from API to goods array
+         */
+        this._fetchProducts()
+            .then(data => {
+                this.goods = [...data];
+                this.renderProducts();
+            });
+
+        /**
+         * spread data array from API to cartGoods array
+         */
+        this._fetchCart()
+            .then(data => {
+                this.cartGoods = [...data.contents];
+                console.log(data);
+                this.countGoods = data.countGoods;
+                this.cartAmount = data.amount;
+                this.renderCart();
+            });
     }
 
     /**
-     * fetching goods array
+     * connect to products API
+     * @returns parsed json as javascript data 
+     * if connect failed - catch error
      */
     _fetchProducts() {
-        this.goods = [
+      return fetch(`${API}/catalogData.json`)
+            .then(result => result.json())
+            .catch(error => console.log(error))     
+    };
 
-            {
-                id: 1,
-                title: "MacBook",
-                price: 100,
-                image: "./img/macbook.png"
-            },
-        
-            {
-                id: 2,
-                title: "Watch",
-                price: 110,
-                image: "./img/watch.png"
-            },
-        
-            {
-                id: 3,
-                title: "iPhone",
-                price: 120,
-                image: "./img/iphone.png"
-            },
-        
-            {
-                id: 4,
-                title: "TV",
-                price: 130,
-                image: "./img/tv.png"
-            },
-
-        ];
+    _fetchCart() {
+        return fetch(`${API}/getBasket.json`)
+            .then(result => result.json())
+            .catch(error => console.log(error))  
     };
 
 
     /**
-     * fint sum of all products
+     * render goods on page
+     */
+    renderProducts() {
+        this.goods.forEach(product => {
+            const item = new ProductItem(product);
+            this.container.insertAdjacentHTML("beforeend", item.render());
+        });
+    };
+
+    renderCart() {
+        this.cartGoods.forEach(product => {
+            const item = new CartItem(product);
+            this.cartContainer.insertAdjacentHTML("beforeend", item.render());
+        });
+
+        this.cartContainer.insertAdjacentHTML("beforeend", `<span class="basket-amount">К оплате: ${this.cartAmount}</span>`);
+        this.cartContainer.insertAdjacentHTML("afterbegin", `<span class="basket-amount">Товаров в корзине: ${this.countGoods}</span>`);
+        if(this.countGoods) {
+            cartCounter.textContent = `${this.countGoods}`;
+        } else {
+            cartCounter.classList.add("disNone");
+        }
+
+
+    };
+
+    /**
+     * find sum of all products
      */
     getProductsSum() {
         let sum = 0;
@@ -57,25 +94,15 @@ class ProductList {
         });
         console.log(`Сумма всех товаров = ${sum} $`);
     };
-
-    /**
-     * render goods on page
-     */
-    render() {
-        this.goods.forEach(product => {
-            const item = new ProductItem(product);
-            this.container.insertAdjacentHTML("beforeend", item.render());
-        });
-    };
 };
 
 
 class ProductItem {
-    constructor(product) {
-        this.id = product.id;
-        this.title = product.title;
+    constructor(product, image = "./img/macbook.png") {
+        this.id = product.id_product;
+        this.title = product.product_name;
         this.price = product.price;
-        this.image = product.image;
+        this.image = image;
     };
 
     /**
@@ -84,12 +111,43 @@ class ProductItem {
     render() {
         return `<div class="product">
                     <img class="product-img" src="${this.image}">
-                    <h3 class="product-title">Apple ${this.title}</h3>
+                    <h3 class="product-title">${this.title}</h3>
                     <p class="product-price">$ ${this.price}</p>
                     <button class="product-buy">Buy!</button>
                 </div>`
     };
 };
+
+class CartItem {
+    constructor(product, image = "./img/macbook.png") {
+        this.id = product.id_product;
+        this.title = product.product_name;
+        this.price = product.price;
+        this.quantity = product.quantity;
+        this.image = image;
+    };
+
+    render() {
+        return `<div class="basket-product">
+                    <img class="basket-product-img" src="${this.image}">
+                    <h3 class="basket-product-title">Наименование:<br>${this.title}</h3>
+                    <p class="basket-product-price">Цена:<br>$${this.price}</p>
+                    <p class="basket-product-quanity">Колличество:<br>${this.quantity}</p>
+                </div>`
+    };
+
+    removeProduct() {
+
+    };
+    
+    incrementItem() {
+
+    };
+
+    decrementItem() {
+
+    };
+}
 
 let list = new ProductList();
 
@@ -112,22 +170,26 @@ class Cart {
     };
 };
 
-class CartItem {
 
-    removeProduct() {
+cart.addEventListener("click", () => {
+    console.log("cart clicked")
+    basketWindow.classList.remove("disNone");
+    basketWindow.classList.add("disBlock");
+});
 
-    };
-    
-    incrementItem() {
+basketWrapper.addEventListener("click", () => {
+    console.log("window clicked")
+    basketWindow.classList.remove("disBlock");
+    basketWindow.classList.add("disNone");
 
-    };
+});
 
-    decrementItem() {
+basketClose.addEventListener("click", () => {
+    console.log("close clicked")
+    basketWindow.classList.remove("disBlock");
+    basketWindow.classList.add("disNone");
 
-    };
-
-};
-
+});
 
 
 
