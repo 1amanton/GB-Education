@@ -1,21 +1,12 @@
-const cart = document.querySelector(".h-basket");
 const cartCounter = document.querySelector(".h-basket-counter");
-const basketWindow = document.querySelector(".basket");
-const basketWrapper = document.querySelector(".basket-wrapper");
-const basketClose = document.querySelector(".basket-close");
-
 const productsDiv = document.querySelector(".productlist");
-const cartDiv = document.querySelector(".basket-window");
-
 const API = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
 
 class ProductList {
-    constructor(container=productsDiv, cartContainer=cartDiv) {
+    constructor(container=productsDiv) {
         this.container = container;
-        this.cartContainer = cartContainer;
 
         this.goods = [];
-        this.cartGoods = [];
 
         /**
          * spread data array from API to goods array
@@ -25,19 +16,7 @@ class ProductList {
                 this.goods = [...data];
                 this.renderProducts();
             });
-
-        /**
-         * spread data array from API to cartGoods array
-         */
-        this._fetchCart()
-            .then(data => {
-                this.cartGoods = [...data.contents];
-                console.log(data);
-                this.countGoods = data.countGoods;
-                this.cartAmount = data.amount;
-                this.renderCart();
-            });
-    }
+    };
 
     /**
      * connect to products API
@@ -50,11 +29,6 @@ class ProductList {
             .catch(error => console.log(error))     
     };
 
-    _fetchCart() {
-        return fetch(`${API}/getBasket.json`)
-            .then(result => result.json())
-            .catch(error => console.log(error))  
-    };
 
 
     /**
@@ -67,22 +41,7 @@ class ProductList {
         });
     };
 
-    renderCart() {
-        this.cartGoods.forEach(product => {
-            const item = new CartItem(product);
-            this.cartContainer.insertAdjacentHTML("beforeend", item.render());
-        });
-
-        this.cartContainer.insertAdjacentHTML("beforeend", `<span class="basket-amount">К оплате: ${this.cartAmount}</span>`);
-        this.cartContainer.insertAdjacentHTML("afterbegin", `<span class="basket-amount">Товаров в корзине: ${this.countGoods}</span>`);
-        if(this.countGoods) {
-            cartCounter.textContent = `${this.countGoods}`;
-        } else {
-            cartCounter.classList.add("disNone");
-        }
-
-
-    };
+    
 
     /**
      * find sum of all products
@@ -95,7 +54,6 @@ class ProductList {
         console.log(`Сумма всех товаров = ${sum} $`);
     };
 };
-
 
 class ProductItem {
     constructor(product, image = "./img/macbook.png") {
@@ -118,21 +76,103 @@ class ProductItem {
     };
 };
 
-class CartItem {
-    constructor(product, image = "./img/macbook.png") {
-        this.id = product.id_product;
-        this.title = product.product_name;
-        this.price = product.price;
-        this.quantity = product.quantity;
-        this.image = image;
+
+class Basket {
+    constructor(container=".basket") {
+        this.container = container;
+
+        this.basketGoods = [];
+
+        this.countGoods = 0;
+        this.countSum = 0;
+
+        this._clickBasket();
+
+        this._fetchBasket()
+            .then(data => {
+                this.basketGoods = [...data.contents];
+                console.log(data);
+                this.renderBasket();
+            });
     };
 
-    render() {
+    _fetchBasket() {
+        return fetch(`${API}/getBasket.json`)
+            .then(result => result.json())
+            .catch(error => console.log(error))  
+    };
+
+    _clickBasket () {
+        document.querySelector(".h-basket").addEventListener("click" , () => {
+            document.querySelector(this.container).classList.toggle("disBlock");
+        });
+    };
+
+    renderBasket() {
+        this.basketGoods.forEach(product => {
+            const item = new BasketItem();
+            document.querySelector(this.container).insertAdjacentHTML("beforeend", item.render(product));
+        });
+
+        this._renderCounter();
+        this._getBasketPriceSum();       
+
+        document.querySelector(this.container).insertAdjacentHTML("beforeend", `<span class="basket-price">К оплате: ${this.countSum}</span>`);
+        document.querySelector(this.container).insertAdjacentHTML("afterbegin", `<span class="basket-quantity">Товаров в корзине: ${this.countGoods}</span>`);
+    };
+
+    _getBasketPriceSum() {
+        this.basketGoods.forEach(product => {
+            this.countSum += product.price;
+        });
+        return this.countSum;
+    };
+
+    _getBasketQuantitySum() {
+        this.basketGoods.forEach(product => {
+            this.countGoods += product.quantity;
+        });
+        return this.countGoods;
+    };
+
+    _renderCounter() {
+        this._getBasketQuantitySum();
+
+        if(this.countGoods) {
+            cartCounter.textContent = `${this.countGoods}`;
+        } else {
+            cartCounter.classList.add("disNone");
+        };
+    };
+
+    addProduct() {
+
+    };
+
+    applyPromocode() {
+
+    };
+
+    makeOrder() {
+
+    };
+
+};
+
+class BasketItem {
+    /** render basket item
+     * @param {object} product 
+     * @returns html basket item
+     */
+    render(product) {
         return `<div class="basket-product">
-                    <img class="basket-product-img" src="${this.image}">
-                    <h3 class="basket-product-title">Наименование:<br>${this.title}</h3>
-                    <p class="basket-product-price">Цена:<br>$${this.price}</p>
-                    <p class="basket-product-quanity">Колличество:<br>${this.quantity}</p>
+                    <img class="basket-product-img" src="">
+                    <div class="basket-product-text">
+                        <h3 class="basket-product-title">Наименование:<br>${product.product_name}</h3>
+                        <p class="basket-product-price">Цена:<br>$${product.price}</p>
+                        <p class="basket-product-quanity">Колличество:<br>${product.quantity}</p>
+                    </div>
+                    
                 </div>`
     };
 
@@ -151,45 +191,5 @@ class CartItem {
 
 let list = new ProductList();
 
-class Cart {
-
-    addProduct() {
-
-    };
-
-    getProductsSum() {
-
-    };
-
-    applyPromocode() {
-
-    };
-
-    makeOrder() {
-
-    };
-};
-
-
-cart.addEventListener("click", () => {
-    console.log("cart clicked")
-    basketWindow.classList.remove("disNone");
-    basketWindow.classList.add("disBlock");
-});
-
-basketWrapper.addEventListener("click", () => {
-    console.log("window clicked")
-    basketWindow.classList.remove("disBlock");
-    basketWindow.classList.add("disNone");
-
-});
-
-basketClose.addEventListener("click", () => {
-    console.log("close clicked")
-    basketWindow.classList.remove("disBlock");
-    basketWindow.classList.add("disNone");
-
-});
-
-
+new Basket()
 
