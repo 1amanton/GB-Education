@@ -1,195 +1,284 @@
-const cartCounter = document.querySelector(".h-basket-counter");
-const productsDiv = document.querySelector(".productlist");
 const API = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
 
-class ProductList {
-    constructor(container=productsDiv) {
+class List {
+    /**
+     * base List structure
+     * @param {*} url URL for Fetching
+     * @param {*} container render container
+     * @param {*} list communications between classes
+     */
+    constructor(url, container, list = connections) {
+        
         this.container = container;
+        this.list = list;
+        this.url = url;
 
         this.goods = [];
+        this.allProducts = [];
 
-        /**
-         * spread data array from API to goods array
-         */
-        this._fetchProducts()
-            .then(data => {
-                this.goods = [...data];
-                this.renderProducts();
-            });
+        this._init();       
+
     };
 
     /**
-     * connect to products API
-     * @returns parsed json as javascript data 
-     * if connect failed - catch error
+     * fetching JSON
+     * @param {*} url local JSON file, if parse not from API
      */
-    _fetchProducts() {
-      return fetch(`${API}/catalogData.json`)
-            .then(result => result.json())
-            .catch(error => console.log(error))     
+    getJson(url) {
+        return fetch(url ? url : `${API}/${this.url}`)
+        .then(result => result.json())
+        .catch(error => {
+            console.log("Error");
+        })
     };
 
-
-
     /**
-     * render goods on page
+     * spread parsed objects(products) in goods array, then render
+     * @param {*} data parsed data objects 
      */
-    renderProducts() {
+    handleData(data) {
+        this.goods = [...data];
+        this.render();
+    };
+
+    render() {
+        console.log(this.constructor.name);
+        const block = document.querySelector(this.container);
+
         this.goods.forEach(product => {
-            const item = new ProductItem(product);
-            this.container.insertAdjacentHTML("beforeend", item.render());
+
+            /**
+             * call connections object as this.list
+             * this.constructor name will be ProductList or Basket
+             * it matters who call constructor, ProductList or Basket
+             * "this" in "this" object call will be whire like = this.a[this.b]
+             * new this.list[this.constructor.name] will be = ProductItem or BasketItem
+             */
+            const productObj = new this.list[this.constructor.name](product)
+
+            this.allProducts.push(productObj);
+
+            block.insertAdjacentHTML("beforeend", productObj.render());
+
         });
     };
 
-    
-
     /**
-     * find sum of all products
+     * dummy method - for use polymorph method _init from child classes
      */
-    getProductsSum() {
-        let sum = 0;
-        this.goods.forEach(product => {
-            sum += product.price;
-        });
-        console.log(`Сумма всех товаров = ${sum} $`);
+    _init() {
+        return false
     };
 };
 
-class ProductItem {
+
+class Item {
     constructor(product, image = "./img/macbook.png") {
         this.id = product.id_product;
-        this.title = product.product_name;
+        this.name = product.product_name;
         this.price = product.price;
         this.image = image;
     };
 
-    /**
-     * render product html
-     */
     render() {
-        return `<div class="product">
+        return `<div class="product" data-id="${this.id}">
                     <img class="product-img" src="${this.image}">
-                    <h3 class="product-title">${this.title}</h3>
+                    <h3 class="product-title">${this.name}</h3>
                     <p class="product-price">$ ${this.price}</p>
-                    <button class="product-buy">Buy!</button>
+
+                    <button class="product-buy"
+                    data-id="${this.id}"
+                    data-name="${this.name}"
+                    data-price="${this.price}">Buy!</button>
                 </div>`
     };
 };
 
+class ProductList extends List {
+    constructor(cart, url ="/catalogData.json", container=".productlist") {
 
-class Basket {
-    constructor(container=".basket") {
-        this.container = container;
+        //call from parent class List
+        super(url, container);
 
-        this.basketGoods = [];
+        this.cart = cart;
 
-        this.countGoods = 0;
-        this.countSum = 0;
+        this.getJson()
+            .then(data => this.handleData(data));
 
-        this._clickBasket();
+    };
 
-        this._fetchBasket()
+    _init () {
+        document.querySelector(this.container).addEventListener("click", e => {
+            if(e.target.classList.contains("product-buy")) {
+
+                //call addProduct method from (cart) Basket class
+                this.cart.addProduct(e.target);
+            }
+        });
+    };
+};
+
+class ProductItem extends Item {
+
+};
+
+
+class Basket extends List {
+    constructor(url="/getBasket.json", container=".basket") {
+        super(url, container);
+
+        this.getJson()
             .then(data => {
-                this.basketGoods = [...data.contents];
-                console.log(data);
-                this.renderBasket();
+                this.handleData(data.contents);
+                this._updateCartIcon();
             });
+
     };
 
-    _fetchBasket() {
-        return fetch(`${API}/getBasket.json`)
-            .then(result => result.json())
-            .catch(error => console.log(error))  
+    /**
+     * 
+     * @param {*} element Buy button with product html-data-values
+     */
+    addProduct(element) {
+        //checking access to server by checkFile.json connection
+        this.getJson(`${API}/addToBasket.json`)
+            .then(data => {
+                if(data.result === 1) {
+
+                    //get id fron html data attributes by dataset array
+                    let productId = +element.dataset["id"];
+                    //find element by id in array of all products
+                    let find = this.allProducts.find(product => product.id === productId);
+                    if(find) {
+                        find.quantity++;
+                        this._updateCart(find);
+                    } else {
+                        let product = {
+                            id_product: productId,
+                            price: +element.dataset["price"],
+                            product_name: element.dataset["name"],
+                            quantity: 1
+                        };
+                        
+                        this.goods = [product];
+                        this.render();
+                        this._updateCartIcon();
+                    };
+
+                } else {
+                    alert("Error");
+                };
+            });
+
     };
 
-    _clickBasket () {
-        document.querySelector(".h-basket").addEventListener("click" , () => {
-            document.querySelector(this.container).classList.toggle("disBlock");
-        });
+    removeProduct(element) {
+        //checking access to server by checkFile.json connection
+        this.getJson(`${API}/deleteFromBasket.json`)
+            .then(data => {
+                if(data.result === 1) {
+
+                    //get id fron html data attributes by dataset array
+                    let productId = +element.dataset["id"];
+                    //find element by id in array of all products
+                    let find = this.allProducts.find(product => product.id === productId);
+                    if(find.quantity > 1) {
+                        find.quantity--;
+                        this._updateCart(find);
+                    } else {
+                        //if quantity < 1 delete product from allProducts array with splice by indexOf
+                        this.allProducts.splice(this.allProducts.indexOf(find), 1);
+                        
+                        //find and remove product from basket html
+                        document.querySelector(`.basket-product[data-id="${productId}"]`).remove();
+                        this._updateCartIcon();                        
+                    };
+
+                } else {
+                    alert("Error");
+                };
+            });
+
     };
 
-    renderBasket() {
-        this.basketGoods.forEach(product => {
-            const item = new BasketItem();
-            document.querySelector(this.container).insertAdjacentHTML("beforeend", item.render(product));
-        });
 
-        this._renderCounter();
-        this._getBasketPriceSum();       
-
-        document.querySelector(this.container).insertAdjacentHTML("beforeend", `<span class="basket-price">К оплате: ${this.countSum}</span>`);
-        document.querySelector(this.container).insertAdjacentHTML("afterbegin", `<span class="basket-quantity">Товаров в корзине: ${this.countGoods}</span>`);
+    /**
+     * update product quantity and price by click add to cart button
+     * @param {*} product
+     */
+    _updateCart (product) {
+        let block = document.querySelector(`.basket-product[data-id="${product.id}"]`);
+        block.querySelector(".basket-product-quanity").textContent = `Кол-во: ${product.quantity}`;
+        block.querySelector(".basket-product-allprice").textContent = `Цена:$${product.price*product.quantity}`;
     };
 
-    _getBasketPriceSum() {
-        this.basketGoods.forEach(product => {
-            this.countSum += product.price;
-        });
-        return this.countSum;
-    };
-
-    _getBasketQuantitySum() {
-        this.basketGoods.forEach(product => {
-            this.countGoods += product.quantity;
-        });
-        return this.countGoods;
-    };
-
-    _renderCounter() {
-        this._getBasketQuantitySum();
-
-        if(this.countGoods) {
-            cartCounter.textContent = `${this.countGoods}`;
+    /**
+     * cart counter icon updater
+     */
+    _updateCartIcon() {
+        if(this.allProducts.length) {
+            document.querySelector(".h-basket-counter").classList.remove("disNone")
+            document.querySelector(".h-basket-counter").textContent = `${this.allProducts.length}`;
         } else {
-            cartCounter.classList.add("disNone");
+            document.querySelector(".h-basket-counter").classList.add("disNone");
         };
     };
 
-    addProduct() {
+    /**
+     * show or hide basket list by basket icon click
+     * remove product by clicked target
+     */
+    _init() {
+        document.querySelector(".h-basket").addEventListener("click" , () => {
+            document.querySelector(this.container).classList.toggle("disBlock");
+        });
 
+        document.querySelector(this.container).addEventListener("click", e => {
+            if(e.target.classList.contains("basket-product-delete")) {
+                this.removeProduct(e.target);
+            };
+        });
+        
+    };
+};
+
+class BasketItem extends Item {
+    constructor(product, imgage="./img/macbook.png") {
+        super(product, imgage);
+
+        this.quantity = product.quantity;
     };
 
-    applyPromocode() {
+    render() {
+        return `<div class="basket-product" data-id="${this.id}">
+                    <img class="basket-product-img" src="${this.image}">
+                    <div class="basket-product-text">
+                        <h3 class="basket-product-title">Наименование:<br>${this.name}</h3>
+                        <p class="basket-product-price">Цена: $${this.price}</p>
+                        <p class="basket-product-quanity">Кол-во: ${this.quantity}</p>
+                    </div>
+                    
+                    <p class="basket-product-allprice">Сумма: ${this.quantity*this.price}</p>
 
-    };
-
-    makeOrder() {
-
+                    <div class="basket-product-delete"
+                    data-id="${this.id}"
+                    >X</div>                    
+                </div>`
     };
 
 };
 
-class BasketItem {
-    /** render basket item
-     * @param {object} product 
-     * @returns html basket item
-     */
-    render(product) {
-        return `<div class="basket-product">
-                    <img class="basket-product-img" src="">
-                    <div class="basket-product-text">
-                        <h3 class="basket-product-title">Наименование:<br>${product.product_name}</h3>
-                        <p class="basket-product-price">Цена:<br>$${product.price}</p>
-                        <p class="basket-product-quanity">Колличество:<br>${product.quantity}</p>
-                    </div>
-                    
-                </div>`
-    };
+/**
+ * communication between classes
+ * LIST : ITEM
+ */
+ const connections = {
+    ProductList: ProductItem,
+    Basket: BasketItem
+};
 
-    removeProduct() {
 
-    };
-    
-    incrementItem() {
-
-    };
-
-    decrementItem() {
-
-    };
-}
-
-let list = new ProductList();
-
-new Basket()
+//make composition with Basket and Products for use Basket methods in ProductList
+let cart = new Basket();
+let products = new ProductList(cart);
 
