@@ -22,6 +22,33 @@ a
         font-weight: 700
         font-size: 1.5rem
 
+    &-search
+        display: flex
+        align-items: center
+        caret-color: white
+        border-bottom: 2px solid white
+
+        &-field
+            border: unset
+            background: black
+            color: white
+            cursor: pointer
+            &:focus
+                outline: none
+
+            &::-webkit-input-placeholder
+                color: white
+
+        &-icon
+            color: white
+            font-size: 1.25rem
+            margin-bottom: 0.25rem
+            cursor: pointer
+
+            &-btn
+                background-color: transparent
+                border: none
+
     &-basket
         stroke: #04ff00
         width: 2rem
@@ -38,6 +65,11 @@ a
             background-color: #e2a025
             border-radius: 50%
             font-weight: 700
+
+.h-search:hover
+    border-color: #04ff00
+    & .h-search-icon
+        color: #04ff00
 
 .productlist
     padding: 2rem 3rem

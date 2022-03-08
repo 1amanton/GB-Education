@@ -33,6 +33,44 @@ a {
   font-size: 1.5rem;
 }
 
+.h-search {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  caret-color: white;
+  border-bottom: 2px solid white;
+}
+
+.h-search-field {
+  border: unset;
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+
+.h-search-field:focus {
+  outline: none;
+}
+
+.h-search-field::-webkit-input-placeholder {
+  color: white;
+}
+
+.h-search-icon {
+  color: white;
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+}
+
+.h-search-icon-btn {
+  background-color: transparent;
+  border: none;
+}
+
 .h-basket {
   stroke: #04ff00;
   width: 2rem;
@@ -50,6 +88,14 @@ a {
   background-color: #e2a025;
   border-radius: 50%;
   font-weight: 700;
+}
+
+.h-search:hover {
+  border-color: #04ff00;
+}
+
+.h-search:hover .h-search-icon {
+  color: #04ff00;
 }
 
 .productlist {

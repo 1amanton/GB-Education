@@ -16,6 +16,8 @@ class List {
         this.goods = [];
         this.allProducts = [];
 
+        this.filtered =[];
+
         this._init();       
 
     };
@@ -61,6 +63,28 @@ class List {
             block.insertAdjacentHTML("beforeend", productObj.render());
 
         });
+    };
+
+
+    /**
+     * Filter from search input by product name
+     * @param {*} value from search input
+     */
+    searchFilter(value) {
+        console.log(value);
+        const regExp = new RegExp(value, "i")
+
+        this.filtered = this.allProducts.filter(product => regExp.test(product.name));
+
+        this.allProducts.forEach(product => {
+            const tovar = document.querySelector(`.product[data-id="${product.id}"]`)
+
+            if(!this.filtered.includes(product)){
+                tovar.classList.add("disNone")
+            } else {
+                tovar.classList.remove("disNone")
+            }
+        })
     };
 
     /**
@@ -114,6 +138,14 @@ class ProductList extends List {
                 //call addProduct method from (cart) Basket class
                 this.cart.addProduct(e.target);
             }
+        });
+
+
+        //SEARCH/ add on form for activate by push Enter and by click button
+        document.querySelector(".h-search").addEventListener("submit", e => {
+            console.log("search inited");
+            e.preventDefault();
+            this.searchFilter(document.querySelector(".h-search-field").value);
         });
     };
 };
