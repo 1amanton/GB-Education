@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+}
+
+input {
+    width: 250px;
+    margin-bottom: 8px;
+}
+
+textarea {
+    width: 250px;
+}
+
+button {
+    margin-top: 16px;
+    width: 100px;
+    padding: 8px 16px;
+    cursor: pointer;
+
+}
+
+button:hover {
+    background-color: lightgreen;
+}
+
+.inputError {
+    color: red;
+    margin-bottom: 16px;
+}
+
+.disBlock {
+    display: block;
+}
+
+.disNone {
+    display: none;
+}

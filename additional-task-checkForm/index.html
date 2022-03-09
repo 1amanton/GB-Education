@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Check Form</title>
+</head>
+<body>
+    <form action="#" class="contactForm">
+        <label for="name">Имя</label>
+        <input type="text" id="name">
+        <p class="inputError name-error disNone">Имя должно содержать только буквы Латиницы и Кириллицы</p>
+        
+        <label for="phone">Телефон в формате +7(000)000-00-00</label>
+        <input type="tel" id="phone">
+        <p class="inputError phone-error disNone">Номер телефона должен быть в формате +7(000)000-00-00</p>
+        
+        <label for="mail">Почта</label>
+        <input type="email" id="mail">
+        <p class="inputError mail-error disNone">Почта должена быть в формате mail@host.ru</p>
+
+        <label for="text">Текст</label>
+        <textarea name="" id="text" cols="30" rows="10"></textarea>
+        
+
+        <button type="submit">Отправить</button>
+        
+    </form>
+    
+    <script src="./main.js"></script>
+</body>
+</html>
