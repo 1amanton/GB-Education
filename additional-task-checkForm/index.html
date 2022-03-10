@@ -8,18 +8,22 @@
     <title>Check Form</title>
 </head>
 <body>
-    <form action="#" class="contactForm">
-        <label for="name">Имя</label>
-        <input type="text" id="name">
-        <p class="inputError name-error disNone">Имя должно содержать только буквы Латиницы и Кириллицы</p>
+    <form action="#" class="contactForm" id="forma">
+        <label for="name">Имя <br>
+            <input type="text" id="name" name="name">
+        </label>
         
-        <label for="phone">Телефон в формате +7(000)000-00-00</label>
-        <input type="tel" id="phone">
-        <p class="inputError phone-error disNone">Номер телефона должен быть в формате +7(000)000-00-00</p>
         
-        <label for="mail">Почта</label>
-        <input type="email" id="mail">
-        <p class="inputError mail-error disNone">Почта должена быть в формате mail@host.ru</p>
+        <label for="phone">Телефон в формате +7(000)000-00-00 <br>
+            <input type="tel" id="phone" name="phone">
+        </label>
+        
+        
+        <label for="mail">Почта <br>
+            <input type="email" id="email" name="email">
+        </label>
+
+        
 
         <label for="text">Текст</label>
         <textarea name="" id="text" cols="30" rows="10"></textarea>
