@@ -14,7 +14,7 @@
                 <span class="h-logo">.eSTORE</span>
             </div>
     
-            <form @submit="searchFilter()" action="#" class="h-search">
+            <form @submit.prevent="searchFilter()" action="#" class="h-search">
                 <input  v-model="userSearch" type="text" placeholder="Search..." class="h-search-field">
                 <button type="submit" class="h-search-icon-btn">
                     <i class="fa-solid fa-magnifying-glass h-search-icon"></i>
@@ -27,12 +27,24 @@
                     <path d="M1.45896 7.62555L0 32H32L30.541 7.62555H1.45896V7.62555ZM3.81867 10.1885H28.1825L29.3345 29.437H2.66548L3.81748 10.1885H3.81867Z" fill="black"/>
                     <path d="M21.5917 7.78886C21.5917 4.89439 19.3019 2.53982 16.4871 2.53982C13.6723 2.53982 11.3825 4.89439 11.3825 7.78886H8.9126C8.9126 3.49408 12.3105 0 16.4871 0C20.6637 0 24.0616 3.49408 24.0616 7.78886H21.5917Z" fill="black"/>
                 </svg>
-                <span class="h-basket-counter">{{ countCart() }}</span>
+                <span v-show="countCart()" class="h-basket-counter">{{ countCart() }}</span>
                                 
             </div>
         </header>
     
         <div v-show="showCart" class="basket">
+            <p v-if="!cartProducts.length" class="basket-empty">Корзина пуста</p>
+
+            <div v-for="item of cartProducts" class="basket-product" :key="item.id_product">
+                <img class="basket-product-img" :src="image">
+                <div class="basket-product-text">
+                    <h3 class="basket-product-title">Наименование:<br>{{ item.product_name }}</h3>
+                    <p class="basket-product-price">Цена:<br>$ {{ item.price }}</p>
+                    <p class="basket-product-quanity">Кол-во:<br>{{ item.quantity }}</p>
+                </div>                
+                <p class="basket-product-allprice">Сумма:<br>$ {{ item.price*item.quantity }} </p>
+                <div @click="removeProduct(item)" class="basket-product-delete">X</div>                    
+            </div>
             
         </div>
 
@@ -42,6 +54,7 @@
                 <img class="product-img" :src="image">
                 <h3 class="product-title">Название: {{ item.product_name }}</h3>
                 <p class="product-price">Цена: {{ item.price }}</p>
+                <button class="product-buy" @click="addProduct(item)">Buy!</button>
             </div>
         </div>
     
