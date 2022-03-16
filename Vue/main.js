@@ -19,6 +19,8 @@ const ProductList = new Vue({
         show: false,
         showCart: false,
 
+        error: false,
+
         image: "https://e7.pngegg.com/pngimages/845/855/png-clipart-alerta-mexico-earthquake-computer-desktop-pc-electronics-text-thumbnail.png",
     },
 
@@ -28,6 +30,7 @@ const ProductList = new Vue({
             .then(result => result.json())
             .catch(error => {
                 console.log("Error");
+                this.error = true;
             })
         },
 
