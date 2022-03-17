@@ -1,4 +1,4 @@
-Vue.component("footerz", {
+const footerz = {
 
     template:`
         <footer class="f">
@@ -12,6 +12,5 @@ Vue.component("footerz", {
                 </a>
             </div>
         </footer>
-    `,
-
-});
+    `
+};

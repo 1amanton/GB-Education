@@ -1,4 +1,4 @@
-Vue.component("error", {
+const error = {
     props:["status"],
 
     template:`
@@ -6,5 +6,4 @@ Vue.component("error", {
         ОШИБКА ПОДКЛЮЧЕНИЯ
         </div>
     `,
-
-});
+};

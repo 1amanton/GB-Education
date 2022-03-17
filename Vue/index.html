@@ -14,17 +14,17 @@
         :status="error">
         </error>
 
-        <headerz></headerz>
+        <headerz
+        ref="headerz">
+        </headerz>
 
         <cart 
-        :visibility="showCart"
-        :products="cartProducts"
-        :image="image" 
-        ></cart>
+        ref="cart"
+        :visibility="showCart">
+        </cart>
 
         <products 
-        :image="image" 
-        :filtered="filteredProducts">
+        ref="products">
         </products>
 
         <footerz></footerz>
