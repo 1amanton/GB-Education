@@ -1,0 +1,62 @@
+[
+  {
+    "id_product": 1,
+    "product_name": "Rashguard New",
+    "price": 4000,
+    "image": "./images/rush_new_front.jpg"
+  },
+  {
+    "id_product": 2,
+    "product_name": "Leggins New",
+    "price": 3500,
+    "image": "./images/pants_new.jpg"
+  },
+  {
+    "id_product": 3,
+    "product_name": "Rashguard Black",
+    "price": 4000,
+    "image": "./images/rush_black_front.jpg"
+  },
+  {
+    "id_product": 4,
+    "product_name": "Leggins Pink",
+    "price": 3500,
+    "image": "./images/pants_pink.jpg"
+  },
+  {
+    "id_product": 5,
+    "product_name": "Rashguard White",
+    "price": 4000,
+    "image": "./images/rush_white_front.jpg"
+  },
+  {
+    "id_product": 6,
+    "product_name": "Leggins Black",
+    "price": 3500,
+    "image": "./images/pants_blue.jpg"
+  },
+  {
+    "id_product": 7,
+    "product_name": "Rashguard SPB",
+    "price": 4000,
+    "image": "./images/rush_spb_front.jpg"
+  },
+  {
+    "id_product": 8,
+    "product_name": "Leggins SPB",
+    "price": 3500,
+    "image": "./images/pants_spb.jpg"
+  },
+  {
+    "id_product": 9,
+    "product_name": "Shorts New",
+    "price": 3000,
+    "image": "./images/shorts_new_front.jpg"
+  },
+  {
+    "id_product": 9,
+    "product_name": "Shorts SPB",
+    "price": 3000,
+    "image": "./images/shorts_spb_front.jpg"
+  }
+]

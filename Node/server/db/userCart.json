@@ -1,0 +1,34 @@
+{
+    "amount": 46600,
+    "countGoods": 2,
+    "contents": [
+        {
+            "quantity": 1,
+            "id_product": 1,
+            "product_name": "Rashguard New",
+            "price": 4000,
+            "image": "./images/rush_new_front.jpg"
+        },
+        {
+            "quantity": 1,
+            "id_product": 2,
+            "product_name": "Leggins New",
+            "price": 3500,
+            "image": "./images/pants_new.jpg"
+        },
+        {
+            "quantity": 1,
+            "id_product": 3,
+            "product_name": "Rashguard Black",
+            "price": 4000,
+            "image": "./images/rush_black_front.jpg"
+        },
+        {
+            "quantity": 1,
+            "id_product": 4,
+            "product_name": "Leggins Pink",
+            "price": 3500,
+            "image": "./images/pants_pink.jpg"
+        }
+    ]
+}
