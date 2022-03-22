@@ -4,7 +4,7 @@ const product = {
     template:`
         <div class="product">
             <p class="product-id">ID: {{ product.id_product}}</p>
-            <img class="product-img" :src="product.image">
+            <img class="product-img" :src="product.imgPath">
             <h3 class="product-title">{{ product.product_name }}</h3>
             <p class="product-price">Цена: {{ product.price }}</p>            
             <button class="product-buy" @click="$root.$refs.cart.addProduct(product)">Buy!</button>
@@ -30,6 +30,7 @@ const products = {
             .then(data => {
                 console.log(data);
                 for(let product of data){
+                    product.imgPath = `img/${product.id_product}.jpg`
                     this.products.push(product);
                     this.filtered.push(product);
                 }
